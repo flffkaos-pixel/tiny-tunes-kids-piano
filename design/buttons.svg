@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="494" height="56" viewBox="0 0 494 56">
+  <rect x="2" y="2" width="158" height="52" rx="14" fill="#4DA6FF"/>
+  <polygon points="30,17 30,39 46,28" fill="#fff"/>
+  <text x="100" y="36" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Auto Play</text>
+  <rect x="168" y="2" width="158" height="52" rx="14" fill="#FF6B6B"/>
+  <rect x="196" y="18" width="20" height="20" rx="5" fill="#fff"/>
+  <text x="262" y="36" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Stop</text>
+  <rect x="334" y="2" width="158" height="52" rx="14" fill="#2ECC71"/>
+  <polygon points="364,14 364,34 371,29.5 374.5,36 378.5,34.2 375,27.5 381,27" fill="#fff"/>
+  <circle cx="376" cy="34" r="9" fill="none" stroke="#fff" stroke-width="2.5" opacity=".7"/>
+  <text x="438" y="36" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="18" font-weight="bold" fill="#fff" text-anchor="middle">Follow</text>
+</svg>

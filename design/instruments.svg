@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="474" height="124" viewBox="0 0 474 124">
+  <rect x="2" y="2" width="112" height="120" rx="16" fill="#FFF3D6" stroke="#FF9F1C" stroke-width="3"/>
+  <g>
+    <rect x="36" y="18" width="9" height="30" rx="2" fill="#FF6B9D"/>
+    <rect x="45" y="18" width="9" height="30" rx="2" fill="#FF6B9D" opacity=".75"/>
+    <rect x="54" y="18" width="9" height="30" rx="2" fill="#FF6B9D" opacity=".55"/>
+    <rect x="63" y="18" width="9" height="30" rx="2" fill="#FF6B9D" opacity=".8"/>
+    <rect x="72" y="18" width="9" height="30" rx="2" fill="#FF6B9D" opacity=".6"/>
+    <rect x="42" y="18" width="6" height="18" rx="1.5" fill="#4A4A4A"/>
+    <rect x="51" y="18" width="6" height="18" rx="1.5" fill="#4A4A4A"/>
+    <rect x="69" y="18" width="6" height="18" rx="1.5" fill="#4A4A4A"/>
+  </g>
+  <text x="58" y="100" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="17" font-weight="bold" fill="#4A4A4A" text-anchor="middle">Piano</text>
+  <rect x="122" y="2" width="112" height="120" rx="16" fill="#fff" stroke="#EEEEEE" stroke-width="3"/>
+  <g fill="#B39DDB">
+    <rect x="162" y="26" width="9" height="22" rx="3"/>
+    <rect x="174" y="18" width="9" height="30" rx="3"/>
+    <rect x="186" y="26" width="9" height="22" rx="3"/>
+    <rect x="156" y="48" width="45" height="6" rx="3"/>
+  </g>
+  <text x="178" y="100" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="17" font-weight="bold" fill="#4A4A4A" text-anchor="middle">Organ</text>
+  <rect x="242" y="2" width="112" height="120" rx="16" fill="#fff" stroke="#EEEEEE" stroke-width="3"/>
+  <g>
+    <rect x="268" y="22" width="34" height="7" rx="3.5" fill="#FF9F1C"/>
+    <rect x="271" y="31" width="28" height="7" rx="3.5" fill="#FF9F1C" opacity=".8"/>
+    <rect x="274" y="40" width="22" height="7" rx="3.5" fill="#FF9F1C" opacity=".6"/>
+    <line x1="306" y1="18" x2="298" y2="34" stroke="#4A4A4A" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="307" cy="15" r="4" fill="#FF6B9D"/>
+  </g>
+  <text x="298" y="100" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="17" font-weight="bold" fill="#4A4A4A" text-anchor="middle">Xylophone</text>
+  <rect x="362" y="2" width="112" height="120" rx="16" fill="#fff" stroke="#EEEEEE" stroke-width="3"/>
+  <g transform="translate(379,24) scale(1.5)">
+    <rect x="1" y="13.5" width="3" height="5" rx="1.5" fill="#C67F00"/>
+    <rect x="4" y="14.5" width="6" height="3" fill="#FFB300"/>
+    <rect x="9" y="14.5" width="20" height="3" rx="1.5" fill="#FFB300"/>
+    <path d="M15.5 17.5 v5 h5 v-5" stroke="#C67F00" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path d="M23.5 17.5 v5 h5 v-5" stroke="#C67F00" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <rect x="14" y="6" width="5" height="11" rx="2" fill="#FFB300"/>
+    <rect x="20" y="6" width="5" height="11" rx="2" fill="#FFB300"/>
+    <rect x="26" y="6" width="5" height="11" rx="2" fill="#FFB300"/>
+    <rect x="13.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/>
+    <rect x="19.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/>
+    <rect x="25.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/>
+    <rect x="29" y="14.5" width="5" height="3" fill="#FFB300"/>
+    <polygon points="34,12 48,3 48,29 34,20" fill="#FFB300"/>
+    <polygon points="34,12 40,8.5 40,23.5 34,20" fill="#F09800"/>
+    <ellipse cx="48" cy="16" rx="2.8" ry="13" fill="#C67F00"/>
+    <ellipse cx="48" cy="16" rx="1.2" ry="10" fill="#7A4D00"/>
+  </g>
+  <text x="418" y="100" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="17" font-weight="bold" fill="#4A4A4A" text-anchor="middle">Trumpet</text>
+</svg>

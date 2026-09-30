@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="486" height="60" viewBox="0 0 486 60">
+  <rect x="2" y="2" width="156" height="56" rx="20" fill="#FF6B9D"/>
+  <polygon points="34,18 34,42 52,30" fill="#fff"/>
+  <text x="102" y="39" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="19" font-weight="bold" fill="#fff" text-anchor="middle">Play</text>
+  <rect x="166" y="2" width="156" height="56" rx="20" fill="#fff" stroke="#4DA6FF" stroke-width="3"/>
+  <g fill="#4DA6FF">
+    <ellipse cx="200" cy="42" rx="5" ry="4"/>
+    <rect x="204" y="16" width="3.4" height="26" rx="1.5"/>
+    <path d="M207 16 C214 16 219 19 219 25 C219 21 214 19.5 207 19.5 Z"/>
+  </g>
+  <text x="266" y="39" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="19" font-weight="bold" fill="#4DA6FF" text-anchor="middle">Songs</text>
+  <rect x="330" y="2" width="156" height="56" rx="20" fill="#fff" stroke="#58CC5B" stroke-width="3"/>
+  <g fill="#58CC5B">
+    <ellipse cx="366" cy="38" rx="8" ry="6.5"/>
+    <circle cx="356" cy="29" r="3.2"/><circle cx="362" cy="25" r="3.2"/><circle cx="369" cy="25" r="3.2"/><circle cx="375" cy="29" r="3.2"/>
+  </g>
+  <text x="424" y="39" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="19" font-weight="bold" fill="#58CC5B" text-anchor="middle">Animals</text>
+</svg>

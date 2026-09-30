@@ -1,0 +1,28 @@
+/* Tiny Tunes: Kids Piano - design tokens as CSS variables */
+:root {
+  --brand-pink: #FF6B9D;
+  --brand-blue: #4DA6FF;
+  --brand-green: #58CC5B;
+  --accent-orange: #FF9F1C;
+  --accent-yellow: #FFD93D;
+  --danger: #FF6B6B;
+  --success: #2ECC71;
+  --ink: #4A4A4A;
+  --muted: #999999;
+  --card: #FFFFFF;
+  --bg-top: #FFF7AD;
+  --bg-mid: #FFD1DC;
+  --bg-bottom: #C5E8FF;
+  --key-c: #FF8A8A;
+  --key-d: #FFB347;
+  --key-e: #FFE066;
+  --key-f: #9BE7A0;
+  --key-g: #7FD8FF;
+  --key-a: #B39DDB;
+  --key-b: #FF9BD2;
+  --key-d5: #FFD166;
+  --font: 'Baloo 2', 'Comic Sans MS', system-ui, sans-serif;
+  --radius-pill: 20px;
+  --radius-card: 16px;
+  --radius-panel: 24px;
+}

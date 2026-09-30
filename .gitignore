@@ -1,0 +1,11 @@
+# Android / Gradle
+.gradle/
+build/
+app/build/
+local.properties
+# Signing keys: NEVER commit - back up release.keystore separately!
+*.keystore
+*.jks
+# OS
+Thumbs.db
+.DS_Store

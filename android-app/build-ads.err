@@ -1,0 +1,58 @@
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:checkDebugAarMetadata'.
+> Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+  Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
+  The following AndroidX dependencies are detected:
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.browser:browser:1.4.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.collection:collection:1.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.browser:browser:1.4.0 -> androidx.annotation:annotation:1.6.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.browser:browser:1.4.0 -> androidx.annotation:annotation:1.6.0 -> androidx.annotation:annotation-jvm:1.6.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.browser:browser:1.4.0 -> androidx.concurrent:concurrent-futures:1.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.browser:browser:1.4.0 -> androidx.interpolator:interpolator:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.core:core:1.8.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.annotation:annotation-experimental:1.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.core:core:1.8.0 -> androidx.lifecycle:lifecycle-runtime:2.3.1
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.room:room-runtime:2.2.5 -> androidx.arch.core:core-runtime:2.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.core:core:1.8.0 -> androidx.lifecycle:lifecycle-runtime:2.3.1 -> androidx.arch.core:core-common:2.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.core:core:1.8.0 -> androidx.lifecycle:lifecycle-runtime:2.3.1 -> androidx.lifecycle:lifecycle-common:2.3.1
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.core:core:1.8.0 -> androidx.versionedparcelable:versionedparcelable:1.1.1
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.privacysandbox.ads:ads-adservices:1.0.0-beta05
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.privacysandbox.ads:ads-adservices-java:1.0.0-beta05 -> androidx.core:core-ktx:1.8.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> androidx.privacysandbox.ads:ads-adservices-java:1.0.0-beta05
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.documentfile:documentfile:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.loader:loader:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.lifecycle:lifecycle-livedata:2.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.lifecycle:lifecycle-livedata:2.1.0 -> androidx.lifecycle:lifecycle-livedata-core:2.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.lifecycle:lifecycle-viewmodel:2.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.print:print:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.customview:customview:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.viewpager:viewpager:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.coordinatorlayout:coordinatorlayout:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.drawerlayout:drawerlayout:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.slidingpanelayout:slidingpanelayout:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.swiperefreshlayout:swiperefreshlayout:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.asynclayoutinflater:asynclayoutinflater:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-appset:16.0.1 -> com.google.android.gms:play-services-base:18.0.0 -> androidx.fragment:fragment:1.0.0 -> androidx.legacy:legacy-support-core-ui:1.0.0 -> androidx.cursoradapter:cursoradapter:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.startup:startup-runtime:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.startup:startup-runtime:1.0.0 -> androidx.tracing:tracing:1.0.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.room:room-runtime:2.2.5
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.room:room-runtime:2.2.5 -> androidx.room:room-common:2.2.5
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.sqlite:sqlite-framework:2.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.sqlite:sqlite:2.1.0
+  :app:debugRuntimeClasspath -> com.google.android.gms:play-services-ads:23.0.0 -> com.google.android.gms:play-services-ads-lite:23.0.0 -> androidx.work:work-runtime:2.7.0 -> androidx.lifecycle:lifecycle-service:2.1.0
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 8s

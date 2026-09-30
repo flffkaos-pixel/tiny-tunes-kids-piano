@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tiny Tunes: Kids Piano</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:'Baloo 2','Comic Sans MS',system-ui,sans-serif; background:linear-gradient(180deg,#FFF7AD 0%,#FFD1DC 40%,#C5E8FF 100%); min-height:100vh; color:#4A4A4A; user-select:none; }
+  header { text-align:center; padding:14px 10px 6px; }
+  header h1 { font-size:28px; color:#FF6B9D; text-shadow:2px 2px 0 #fff; }
+  header p { font-size:14px; color:#888; }
+  nav { display:flex; gap:8px; padding:10px 12px; position:sticky; top:0; z-index:10; }
+  nav button { flex:1; border:none; border-radius:20px; padding:14px 4px; font-size:17px; font-weight:bold; font-family:inherit; background:#fff; color:#AAA; box-shadow:0 3px 0 rgba(0,0,0,.08); cursor:pointer; }
+  nav button.active { color:#fff; transform:scale(1.03); }
+  nav button[data-tab="inst"] { border:3px solid #FF6B9D; }
+  nav button[data-tab="inst"].active { background:#FF6B9D; }
+  nav button[data-tab="song"] { border:3px solid #4DA6FF; }
+  nav button[data-tab="song"].active { background:#4DA6FF; }
+  nav button[data-tab="animal"] { border:3px solid #58CC5B; }
+  nav button[data-tab="animal"].active { background:#58CC5B; }
+  section { display:none; padding:6px 12px 120px; max-width:640px; margin:0 auto; }
+  section.show { display:block; }
+  .inst-row { display:flex; gap:8px; margin:8px 0 12px; }
+  .inst-row button { flex:1; border:3px solid #eee; background:#fff; border-radius:16px; padding:10px 2px; font-family:inherit; font-size:14px; font-weight:bold; cursor:pointer; }
+  .inst-row button.active { border-color:#FF9F1C; background:#FFF3D6; }
+  .inst-row .big { font-size:28px; display:block; }
+  .kbd-wrap { background:#fff; border-radius:24px; padding:14px 10px 18px; box-shadow:0 6px 0 rgba(0,0,0,.06); }
+  .kbd { position:relative; height:clamp(180px,30vh,230px); display:flex; }
+  nav button svg { vertical-align:-4px; }
+  .inst-row button svg { display:block; margin:0 auto 3px; }
+  .btn svg { vertical-align:-3px; margin-right:4px; }
+  .song-item .cover { font-family:inherit; font-weight:bold; font-size:24px; color:#5A5A5A; }
+  .star-pop svg { display:block; }
+  @media (orientation:landscape){
+    header { padding:8px 10px 2px; } header h1 { font-size:22px; } header p { display:none; }
+    nav { max-width:920px; margin:0 auto; } nav button { padding:10px 4px; font-size:15px; }
+    section { max-width:920px; padding-bottom:40px; }
+    .inst-row { margin:6px 0 8px; } .inst-row button { padding:6px 2px; font-size:13px; }
+    .kbd { height:36vh; min-height:160px; }
+    .zoo { grid-template-columns:repeat(6,1fr); } .zoo .em { font-size:32px; } .zoo b { font-size:14px; }
+    .song-list { display:grid; grid-template-columns:repeat(2,1fr); }
+    footer { display:none; }
+  }
+  @media (max-width:380px){
+    nav button { font-size:14px; } .btn { font-size:14px; padding:12px 8px; }
+    .inst-row button { font-size:12px; }
+  }
+  .wk { flex:1; border-radius:0 0 14px 14px; border:3px solid #eee; border-top:none; margin:0 2px; position:relative; cursor:pointer; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding-bottom:10px; font-weight:bold; font-size:13px; color:rgba(0,0,0,.45); transition:transform .05s; min-width:0; }
+  .wk:active, .wk.hit { transform:scaleY(.96); filter:brightness(1.1); }
+  .wk .sol { font-size:15px; }
+  .wk .ani { font-size:19px; }
+  .wk.target { animation:pulse .6s infinite alternate; box-shadow:0 0 0 5px #FFD93D, 0 0 20px #FFD93D; z-index:5; }
+  @keyframes pulse { from{filter:brightness(1);} to{filter:brightness(1.25);} }
+  .bk { position:absolute; top:0; height:58%; background:linear-gradient(180deg,#555,#222); border-radius:0 0 10px 10px; z-index:2; cursor:pointer; display:flex; justify-content:center; align-items:flex-end; color:#fff; font-size:11px; padding-bottom:6px; }
+  .bk:active, .bk.hit { background:linear-gradient(180deg,#FF6B9D,#c73e6d); }
+  .kbd-wrap[data-inst=organ] .bk.hit, .kbd-wrap[data-inst=organ] .bk:active { background:linear-gradient(180deg,#FFC93C,#E07B00); }
+  .kbd-wrap[data-inst=xylophone] .bk.hit, .kbd-wrap[data-inst=xylophone] .bk:active { background:linear-gradient(180deg,#4DD0FF,#0099DD); }
+  .kbd-wrap[data-inst=trumpet] .bk.hit, .kbd-wrap[data-inst=trumpet] .bk:active { background:linear-gradient(180deg,#FFE066,#E0A800); }
+  #kbd[hidden] { display:none; }
+  #kbd2[hidden] { display:none; }
+  #tab-song .padHL { box-shadow:0 0 0 4px #FFD93D !important; filter:brightness(1.2); }
+  .pads[hidden] { display:none !important; }
+  #pad-xylo { display:flex; flex-direction:column; gap:6px; }
+  #pad2-xylo { display:flex; flex-direction:column; gap:6px; }
+  #pad-xylo.vbars { flex-direction:row; align-items:flex-end; height:230px; }
+  #pad2-xylo.vbars { flex-direction:row; align-items:flex-end; height:230px; }
+  #pad-xylo.vbars .xbar { flex:1; min-width:0; min-height:0; flex-direction:column; justify-content:flex-end; padding:6px 0 8px; font-size:13px; }
+  #pad2-xylo.vbars .xbar { flex:1; min-width:0; min-height:0; flex-direction:column; justify-content:flex-end; padding:6px 0 8px; font-size:13px; }
+  .xbar { min-height:40px; border-radius:10px; display:flex; align-items:center; gap:8px; padding:6px 12px; font-weight:bold; color:#fff; cursor:pointer; text-shadow:0 1px 2px rgba(0,0,0,.25); font-size:15px; }
+  .xbar.sharp { width:72%; min-height:34px; font-size:13px; background:linear-gradient(180deg,#78909C,#37474F) !important; }
+  .xbar.hit { filter:brightness(1.15); }
+  #pad-organ { display:flex; align-items:flex-end; gap:5px; height:230px; }
+  .pipe { flex:1; min-width:0; border-radius:9px 9px 7px 7px; background:linear-gradient(180deg,#FFFEF7,#EFDCAC); border:2px solid #C9A86A; color:#7A5C33; font-weight:bold; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:8px; cursor:pointer; font-size:12px; }
+  .pipe.sharp { background:linear-gradient(180deg,#7A5230,#3E2712); color:#FFE9C4; border-color:#3E2712; }
+  .pipe.hit { filter:brightness(1.12); }
+  .t-one svg { width:100%; height:auto; display:block; }
+  .t-one text { pointer-events:none; user-select:none; font-family:'Baloo 2','Comic Sans MS',sans-serif; }
+  .t-one .deco { pointer-events:none; }
+  .t-one .hit { filter:brightness(1.3); }
+  .t-big svg { width:100%; height:auto; display:block; margin-bottom:4px; }
+  .t-big { margin-top:12px; }
+  #pad-trumpet .t-top { display:flex; gap:6px; margin-bottom:10px; }
+  #pad-trumpet .t-main { display:flex; gap:6px; margin-top:10px; }
+  #pad-trumpet .t-top button, #pad-trumpet .t-main button { flex:1; min-width:0; border:none; border-radius:14px; font-family:inherit; font-weight:bold; font-size:13px; padding:10px 0; cursor:pointer; }
+  #pad-trumpet .t-top button small, #pad-trumpet .t-main button small { display:block; font-size:10px; font-weight:normal; }
+  #pad-trumpet button.major { background:radial-gradient(circle at 50% 30%,#FFE9A8,#FFB300 65%,#D99400); color:#6B4400; box-shadow:0 3px 0 #9A6100; }
+  #pad-trumpet button.minor { background:linear-gradient(180deg,#6E4E1F,#3A2708); color:#FFE9C4; box-shadow:0 3px 0 #201304; }
+  #pad-trumpet .t-mid { margin:2px 0; }
+  #pad-trumpet .t-mid svg { width:88%; height:auto; display:block; margin:0 auto; }
+  #pad-trumpet button.hit { filter:brightness(1.2); }
+  #pad-trumpet .t-top, #pad-trumpet .t-mid, #pad-trumpet .t-main { display:none; }
+  #pad-trumpet .t-choir { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .tpt { background:linear-gradient(180deg,#FFFFF8,#F3DF9E); border:2px solid #E0C476; border-radius:14px; padding:8px 4px 6px; display:flex; flex-direction:column; align-items:center; gap:2px; font-weight:bold; color:#8A6D1F; cursor:pointer; font-size:14px; }
+  .tpt svg { width:100%; height:auto; display:block; }
+  .tpt small { font-weight:normal; font-size:11px; }
+  .tpt.sharp { background:linear-gradient(180deg,#6E4E1F,#3A2708); border-color:#3A2708; color:#FFE9C4; }
+  .tpt.hit { filter:brightness(1.12); }
+  @media (orientation:landscape){
+    #pad-organ { height:38vh; min-height:170px; }
+    #pad-xylo.vbars { height:38vh; min-height:170px; }
+    #pad2-xylo.vbars { height:38vh; min-height:170px; }
+    #pad-trumpet .t-choir { grid-template-columns:repeat(5,1fr); }
+  }
+  .wk { background:linear-gradient(180deg,#fff,var(--kc,#eee)); }
+  .kbd-wrap[data-inst=organ] { background:#F7EBD0; }
+  .kbd-wrap[data-inst=organ] .wk { background:linear-gradient(180deg,#FFFEF7,#EAD9AC); color:#7A5C33; border-color:#D9C491; }
+  .kbd-wrap[data-inst=organ] .bk { background:linear-gradient(180deg,#8A6238,#4A3016); }
+  .kbd-wrap[data-inst=xylophone] { background:#E2F2FD; }
+  .kbd-wrap[data-inst=xylophone] .wk { background:var(--kcs,#4DA6FF); color:#fff; border-color:rgba(255,255,255,.7); text-shadow:0 1px 2px rgba(0,0,0,.25); }
+  .kbd-wrap[data-inst=xylophone] .bk { background:linear-gradient(180deg,#78909C,#37474F); }
+  .kbd-wrap[data-inst=trumpet] { background:#FFF0CB; }
+  .kbd-wrap[data-inst=trumpet] .wk { background:linear-gradient(180deg,#FFFFF8,#F3DF9E); border-color:#E0C476; color:#8A6D1F; }
+  .kbd-wrap[data-inst=trumpet] .bk { background:linear-gradient(180deg,#6E4E1F,#33230C); }
+  .bk.target { animation:pulse .6s infinite alternate; box-shadow:0 0 0 4px #FFD93D; }
+  .song-ctl { background:#fff; border-radius:18px; padding:12px; margin-bottom:10px; box-shadow:0 4px 0 rgba(0,0,0,.05); }
+  .song-ctl .row { display:flex; gap:8px; align-items:center; margin-top:8px; }
+  .btn { border:none; border-radius:14px; padding:12px 16px; font-family:inherit; font-size:16px; font-weight:bold; color:#fff; cursor:pointer; }
+  .btn.play { background:#4DA6FF; flex:1; } .btn.stop { background:#FF6B6B; flex:1; }
+  .btn.follow { background:#FF9F1C; flex:1; } .btn.follow.on { background:#2ECC71; }
+  .song-list { display:flex; flex-direction:column; gap:8px; }
+  .song-item { background:#fff; border-radius:16px; padding:12px 14px; display:flex; align-items:center; gap:10px; border:3px solid transparent; cursor:pointer; }
+  .song-item.sel { border-color:#4DA6FF; background:#EAF4FF; }
+  .song-item .cover { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+  .song-item b { font-size:16px; } .song-item small { color:#999; }
+  .stars { text-align:center; font-size:22px; min-height:30px; margin:4px 0; }
+  input[type=range]{ flex:1; accent-color:#4DA6FF; height:30px; }
+  .zoo { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+  .zoo button { border:none; border-radius:20px; padding:16px 4px 12px; font-family:inherit; cursor:pointer; background:#fff; box-shadow:0 4px 0 rgba(0,0,0,.06); }
+  .zoo button:active { transform:scale(.93); }
+  .zoo .em { font-size:44px; display:block; }
+  .zoo b { font-size:16px; }
+  .zoo small { color:#999; font-size:12px; display:block; }
+  .zoo button.flash { outline:5px solid #FFD93D; }
+  footer { text-align:center; padding:16px; color:#B0A89F; font-size:12px; }
+  .star-pop { position:fixed; pointer-events:none; font-size:28px; animation:float 0.9s ease-out forwards; z-index:99; }
+  @keyframes float { to { transform:translateY(-90px) rotate(30deg) scale(1.4); opacity:0; } }
+</style>
+</head>
+<body>
+<header>
+  <h1><svg viewBox="0 0 42 32" width="34" height="26" style="vertical-align:-4px"><rect x="2" y="2" width="7" height="28" rx="2" fill="#FF6B9D"/><rect x="9" y="2" width="7" height="28" rx="2" fill="#FF6B9D" opacity=".8"/><rect x="16" y="2" width="7" height="28" rx="2" fill="#FF6B9D" opacity=".65"/><rect x="23" y="2" width="7" height="28" rx="2" fill="#FF6B9D" opacity=".85"/><rect x="30" y="2" width="7" height="28" rx="2" fill="#FF6B9D" opacity=".7"/><rect x="6" y="2" width="5" height="17" rx="1.5" fill="#4A4A4A"/><rect x="13" y="2" width="5" height="17" rx="1.5" fill="#4A4A4A"/><rect x="27" y="2" width="5" height="17" rx="1.5" fill="#4A4A4A"/></svg> Tiny Tunes</h1>
+  <p>Piano music game for ages 1-6</p>
+</header>
+<nav>
+  <button data-tab="inst" class="active"><svg viewBox="0 0 24 24" width="20" height="20"><polygon points="7,4 20,12 7,20" fill="currentColor"/></svg> Play</button>
+  <button data-tab="song"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><ellipse cx="7" cy="18" rx="4" ry="3.2"/><rect x="10" y="3" width="2.6" height="15" rx="1"/><path d="M12.6 3 C17 3 20 5 20 9 C20 6 17 4.6 12.6 4.8 Z"/></svg> Songs</button>
+  <button data-tab="animal"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><ellipse cx="12" cy="15" rx="6" ry="5"/><circle cx="5" cy="9.5" r="2.4"/><circle cx="9.3" cy="6.5" r="2.4"/><circle cx="14.7" cy="6.5" r="2.4"/><circle cx="19" cy="9.5" r="2.4"/></svg> Animals</button>
+</nav>
+
+<!-- ============ PLAY MODE ============ -->
+<section id="tab-inst" class="show">
+  <div class="inst-row" id="instRow">
+    <button data-inst="piano" class="active"><svg viewBox="0 0 42 32" width="36" height="26"><rect x="1" y="1" width="8" height="30" rx="2" fill="#FF6B9D"/><rect x="9" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".8"/><rect x="17" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".65"/><rect x="25" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".85"/><rect x="33" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".7"/><rect x="5" y="1" width="5" height="18" rx="1.5" fill="#4A4A4A"/><rect x="13" y="1" width="5" height="18" rx="1.5" fill="#4A4A4A"/><rect x="29" y="1" width="5" height="18" rx="1.5" fill="#4A4A4A"/></svg>Piano</button>
+    <button data-inst="organ"><svg viewBox="0 0 40 32" width="36" height="26" fill="#B39DDB"><rect x="8" y="10" width="7" height="18" rx="2.5"/><rect x="17" y="4" width="7" height="24" rx="2.5"/><rect x="26" y="10" width="7" height="18" rx="2.5"/><rect x="4" y="28" width="33" height="3.5" rx="1.7"/></svg>Organ</button>
+    <button data-inst="xylophone"><svg viewBox="0 0 40 32" width="36" height="26"><rect x="4" y="8" width="24" height="5" rx="2.5" fill="#FF9F1C"/><rect x="6" y="14.5" width="20" height="5" rx="2.5" fill="#FF9F1C" opacity=".8"/><rect x="8" y="21" width="16" height="5" rx="2.5" fill="#FF9F1C" opacity=".6"/><line x1="32" y1="5" x2="27" y2="16" stroke="#4A4A4A" stroke-width="2" stroke-linecap="round"/><circle cx="33" cy="4" r="3" fill="#FF6B9D"/></svg>Xylophone</button>
+    <button data-inst="trumpet"><svg viewBox="0 0 52 32" width="40" height="25"><rect x="1" y="13.5" width="3" height="5" rx="1.5" fill="#C67F00"/><rect x="4" y="14.5" width="6" height="3" fill="#FFB300"/><rect x="9" y="14.5" width="20" height="3" rx="1.5" fill="#FFB300"/><path d="M15.5 17.5 v5 h5 v-5" stroke="#C67F00" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M23.5 17.5 v5 h5 v-5" stroke="#C67F00" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="14" y="6" width="5" height="11" rx="2" fill="#FFB300"/><rect x="20" y="6" width="5" height="11" rx="2" fill="#FFB300"/><rect x="26" y="6" width="5" height="11" rx="2" fill="#FFB300"/><rect x="13.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/><rect x="19.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/><rect x="25.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/><rect x="29" y="14.5" width="5" height="3" fill="#FFB300"/><polygon points="34,12 48,3 48,29 34,20" fill="#FFB300"/><polygon points="34,12 40,8.5 40,23.5 34,20" fill="#F09800"/><ellipse cx="48" cy="16" rx="2.8" ry="13" fill="#C67F00"/><ellipse cx="48" cy="16" rx="1.2" ry="10" fill="#7A4D00"/></svg>Trumpet</button>
+  </div>
+  <div class="kbd-wrap" data-inst="piano" id="playWrap">
+    <div class="kbd" id="kbd"></div>
+    <div class="pads" id="pad-xylo" hidden></div>
+    <div class="pads" id="pad-organ" hidden></div>
+    <div class="pads" id="pad-trumpet" hidden><div class="t-one"></div><div class="t-top"></div><div class="t-mid"></div><div class="t-main"></div><div class="t-big" hidden><svg viewBox="0 0 260 100"><rect x="4" y="44" width="10" height="12" rx="6" fill="#C67F00"/><rect x="14" y="47" width="30" height="6" rx="3" fill="#FFB300"/><rect x="44" y="47" width="90" height="6" rx="3" fill="#FFB300"/><rect x="70" y="30" width="16" height="34" rx="5" fill="#FFB300" stroke="#C67F00" stroke-width="2"/><rect x="95" y="30" width="16" height="34" rx="5" fill="#FFB300" stroke="#C67F00" stroke-width="2"/><rect x="120" y="30" width="16" height="34" rx="5" fill="#FFB300" stroke="#C67F00" stroke-width="2"/><rect x="67" y="22" width="22" height="10" rx="5" fill="#C67F00"/><rect x="92" y="22" width="22" height="10" rx="5" fill="#C67F00"/><rect x="117" y="22" width="22" height="10" rx="5" fill="#C67F00"/><path d="M74 64 v14 h12 v-14" stroke="#C67F00" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M99 64 v14 h12 v-14" stroke="#C67F00" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M124 64 v14 h12 v-14" stroke="#C67F00" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="134" y="47" width="20" height="6" fill="#FFB300"/><rect x="154" y="47" width="16" height="6" fill="#FFB300"/><polygon points="170,40 240,8 240,92 170,60" fill="#FFB300"/><polygon points="170,40 195,30 195,70 170,60" fill="#F09800"/><ellipse cx="240" cy="50" rx="9" ry="42" fill="#C67F00"/><ellipse cx="240" cy="50" rx="4" ry="34" fill="#7A4D00"/><ellipse cx="205" cy="36" rx="18" ry="5" fill="#fff" opacity=".35"/></svg></div></div>
+  </div>
+  <p style="text-align:center;margin-top:10px;color:#999;font-size:13px;">Tap the keys! Sounds and sparkles!</p>
+</section>
+
+<!-- ============ SONGS MODE ============ -->
+<section id="tab-song">
+  <div class="song-ctl">
+    <div class="stars" id="stars">Play a song or try Follow Me!</div>
+    <div class="inst-row" id="songInstRow">
+      <button data-sinst="piano" class="active"><svg viewBox="0 0 42 32" width="30" height="22"><rect x="1" y="1" width="8" height="30" rx="2" fill="#FF6B9D"/><rect x="9" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".8"/><rect x="17" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".65"/><rect x="25" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".85"/><rect x="33" y="1" width="8" height="30" rx="2" fill="#FF6B9D" opacity=".7"/><rect x="5" y="1" width="5" height="18" rx="1.5" fill="#4A4A4A"/><rect x="13" y="1" width="5" height="18" rx="1.5" fill="#4A4A4A"/><rect x="29" y="1" width="5" height="18" rx="1.5" fill="#4A4A4A"/></svg>Piano</button>
+      <button data-sinst="organ"><svg viewBox="0 0 40 32" width="30" height="22" fill="#B39DDB"><rect x="8" y="10" width="7" height="18" rx="2.5"/><rect x="17" y="4" width="7" height="24" rx="2.5"/><rect x="26" y="10" width="7" height="18" rx="2.5"/><rect x="4" y="28" width="33" height="3.5" rx="1.7"/></svg>Organ</button>
+      <button data-sinst="xylophone"><svg viewBox="0 0 40 32" width="30" height="22"><rect x="4" y="8" width="24" height="5" rx="2.5" fill="#FF9F1C"/><rect x="6" y="14.5" width="20" height="5" rx="2.5" fill="#FF9F1C" opacity=".8"/><rect x="8" y="21" width="16" height="5" rx="2.5" fill="#FF9F1C" opacity=".6"/><line x1="32" y1="5" x2="27" y2="16" stroke="#4A4A4A" stroke-width="2" stroke-linecap="round"/><circle cx="33" cy="4" r="3" fill="#FF6B9D"/></svg>Xylo</button>
+      <button data-sinst="trumpet"><svg viewBox="0 0 52 32" width="34" height="22"><rect x="1" y="13.5" width="3" height="5" rx="1.5" fill="#C67F00"/><rect x="4" y="14.5" width="6" height="3" fill="#FFB300"/><rect x="9" y="14.5" width="20" height="3" rx="1.5" fill="#FFB300"/><path d="M15.5 17.5 v5 h5 v-5" stroke="#C67F00" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M23.5 17.5 v5 h5 v-5" stroke="#C67F00" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="14" y="6" width="5" height="11" rx="2" fill="#FFB300"/><rect x="20" y="6" width="5" height="11" rx="2" fill="#FFB300"/><rect x="26" y="6" width="5" height="11" rx="2" fill="#FFB300"/><rect x="13.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/><rect x="19.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/><rect x="25.2" y="3" width="6.6" height="3.4" rx="1.7" fill="#C67F00"/><rect x="29" y="14.5" width="5" height="3" fill="#FFB300"/><polygon points="34,12 48,3 48,29 34,20" fill="#FFB300"/><ellipse cx="48" cy="16" rx="2.8" ry="13" fill="#C67F00"/></svg>Trumpet</button>
+    </div>
+    <div class="row">
+      <button class="btn play" id="btnAuto"><svg viewBox="0 0 24 24" width="18" height="18"><polygon points="7,4 20,12 7,20" fill="#fff"/></svg>Auto Play</button>
+      <button class="btn stop" id="btnStop"><svg viewBox="0 0 24 24" width="18" height="18"><rect x="5" y="5" width="14" height="14" rx="3" fill="#fff"/></svg>Stop</button>
+      <button class="btn follow" id="btnFollow"><svg viewBox="0 0 24 24" width="18" height="18"><polygon points="8,3 8,15 12,12 13.6,16.5 15.6,15.6 14,11.2 17.5,11" fill="#fff"/></svg><span>Follow: OFF</span></button>
+    </div>
+    <div class="row"><span>Slow</span><input type="range" id="tempo" min="40" max="140" value="90"><span>Fast</span></div>
+  </div>
+  <div class="kbd-wrap" style="margin-bottom:10px;" id="songWrap"><div class="kbd" id="kbd2"></div><div class="pads" id="pad2-xylo" hidden></div><div class="pads" id="pad2-organ" hidden></div><div class="pads" id="pad2-trumpet" hidden><div class="t-one"></div></div></div>
+  <div class="song-list" id="songList"></div>
+</section>
+
+<!-- ============ ANIMALS MODE ============ -->
+<section id="tab-animal">
+  <p style="text-align:center;margin:6px 0 10px;font-size:15px;">Tap an animal friend and hear its sound!</p>
+  <div class="zoo" id="zoo"></div>
+</section>
+
+<footer>Works offline · Kid-safe ads · 23 public-domain songs</footer>
+
+<script>
+/* ---------- Audio engine ---------- */
+let AC = null;
+function ac(){ if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)(); if(AC.state==='suspended') AC.resume(); return AC; }
+let curInst = 'piano';
+const SEMI = {C:0,'C#':1,D:2,'D#':3,E:4,F:5,'F#':6,G:7,'G#':8,A:9,'A#':10,B:11};
+function freq(note){
+  const m = note.match(/^([A-G]#?)(\d)$/); const midi = SEMI[m[1]] + (parseInt(m[2])+1)*12;
+  return 440*Math.pow(2,(midi-69)/12);
+}
+function playNote(note, dur, when, inst){
+  dur = dur||0.9; when = when||0; inst = inst||curInst;
+  const c = ac(), t = c.currentTime + when, f = freq(note);
+  const g = c.createGain(); g.connect(c.destination);
+  const mk = (type,ff,vol,dec)=>{ const o=c.createOscillator(),og=c.createGain(); o.type=type;o.frequency.value=ff; og.gain.setValueAtTime(vol,t); og.gain.exponentialRampToValueAtTime(0.001,t+dec); o.connect(og);og.connect(g); o.start(t);o.stop(t+dec+0.05); };
+  if(inst==='piano'){ mk('triangle',f,0.5,dur); mk('sine',f*2,0.18,dur*0.6); }
+  else if(inst==='organ'){ const o=c.createOscillator(),o2=c.createOscillator(); o.type='sine';o2.type='sine'; o.frequency.value=f;o2.frequency.value=f*2; const og=c.createGain(); og.gain.setValueAtTime(0.0001,t); og.gain.linearRampToValueAtTime(0.4,t+0.03); og.gain.setValueAtTime(0.4,t+Math.max(0.05,dur-0.15)); og.gain.linearRampToValueAtTime(0.0001,t+dur); o.connect(og);o2.connect(og);og.connect(g); o.start(t);o2.start(t);o.stop(t+dur+0.05);o2.stop(t+dur+0.05); }
+  else if(inst==='xylophone'){ mk('sine',f,0.6,0.45); mk('sine',f*4,0.15,0.25); }
+  else if(inst==='trumpet'){ const o=c.createOscillator(); o.type='sawtooth'; o.frequency.value=f; const fl=c.createBiquadFilter(); fl.type='lowpass'; fl.frequency.value=1500; const og=c.createGain(); og.gain.setValueAtTime(0.0001,t); og.gain.linearRampToValueAtTime(0.28,t+0.06); og.gain.setValueAtTime(0.28,t+Math.max(0.08,dur-0.12)); og.gain.linearRampToValueAtTime(0.0001,t+dur); o.connect(fl);fl.connect(og);og.connect(g); o.start(t);o.stop(t+dur+0.05); }
+  g.gain.value = 0.9;
+}
+function pop(x,y,txt){ const s=document.createElement('div'); s.className='star-pop';
+  if(txt){ s.textContent=txt; s.style.fontSize='28px'; }
+  else { const cols=['#FFD93D','#FF6B9D','#4DA6FF','#58CC5B','#FF9F1C']; const c=cols[Math.floor(Math.random()*cols.length)];
+    s.innerHTML='<svg viewBox="0 0 80 80" width="30" height="30"><polygon points="40,6 49,30 74,31 54,46 60,71 40,57 20,71 26,46 6,31 31,30" fill="'+c+'" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>'; } s.style.left=x+'px'; s.style.top=y+'px'; document.body.appendChild(s); setTimeout(()=>s.remove(),900); if(navigator.vibrate) navigator.vibrate(15); }
+
+/* ---------- Keyboard (C4..D5) ---------- */
+const WHITE = [ ['C4','Do','#FF8A8A'], ['D4','Re','#FFB347'], ['E4','Mi','#FFE066'], ['F4','Fa','#9BE7A0'], ['G4','Sol','#7FD8FF'], ['A4','La','#B39DDB'], ['B4','Ti','#FF9BD2'], ['C5','Do','#FF8A8A'], ['D5','Re','#FFD166'] ];
+const BLACK = [ {n:'C#4',after:0}, {n:'D#4',after:1}, {n:'F#4',after:3}, {n:'G#4',after:4}, {n:'A#4',after:5}, {n:'C#5',after:7} ];
+function buildKbd(elId, onPress){
+  const el = document.getElementById(elId); el.innerHTML='';
+  const wp = 100/WHITE.length, bw = wp*0.76;
+  WHITE.forEach(w=>{
+    const d=document.createElement('div'); d.className='wk'; d.dataset.note=w[0]; d.style.setProperty('--kc',w[2]+'55'); d.style.setProperty('--kcs',w[2]);
+    d.innerHTML='<span class="sol">'+w[1]+'</span><span>'+w[0]+'</span>';
+    d.addEventListener('pointerdown',e=>{ e.preventDefault(); hitKey(d,w[0],e); });
+    el.appendChild(d);
+  });
+  BLACK.forEach(b=>{
+    const d=document.createElement('div'); d.className='bk'; d.dataset.note=b.n; d.textContent=b.n.replace('4','').replace('5','');
+    d.style.width=bw+'%'; d.style.left='calc('+((b.after+1)*wp)+'% - '+(bw/2)+'%)';
+    d.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); hitKey(d,b.n,e); });
+    el.appendChild(d);
+  });
+  function hitKey(d,note,e){ playNote(note,0.9,0,(typeof songInst!=='undefined'&&elId==='kbd2')?songInst:curInst); d.classList.add('hit'); setTimeout(()=>d.classList.remove('hit'),150); if(e) pop(e.clientX||200,e.clientY||300); onPress&&onPress(note,d); }
+  return { clearTarget(){ el.querySelectorAll('.target').forEach(x=>x.classList.remove('target')); }, mark(note){ this.clearTarget(); const k=el.querySelector('[data-note="'+note+'"]'); if(k) k.classList.add('target'); } };
+}
+const kbd1 = buildKbd('kbd');
+const ALLNOTES = WHITE.map(w=>({n:w[0],sol:w[1],sharp:false})).concat(BLACK.map(b=>({n:b.n,sol:b.n.replace(/[45]/g,''),sharp:true}))).sort((a,b)=>freq(a.n)-freq(b.n));
+function colorFor(n){ const w=WHITE.find(x=>x[0]===n); return w?w[2]:'#607D8B'; }
+function hitPad(d,note,e,inst){ playNote(note,0.9,0,inst||curInst); d.classList.add('hit'); setTimeout(()=>d.classList.remove('hit'),150); if(e) pop(e.clientX||200,e.clientY||300); }
+function mkPad(cls,note,html,getInst,onPress){ const d=document.createElement('div'); d.className=cls; d.dataset.note=note; d.innerHTML=html; d.addEventListener('pointerdown',e=>{ e.preventDefault(); hitPad(d,note,e,getInst&&getInst()); if(onPress)onPress(note,d); }); return d; }
+(function buildPads(){
+  const xy=document.getElementById('pad-xylo');
+  xy.classList.add('vbars');
+  ALLNOTES.filter(o=>!o.sharp).forEach((o,i)=>{ const d=mkPad('xbar',o.n,'<span>'+o.sol+'</span><span>'+o.n+'</span>'); d.style.background=colorFor(o.n); d.style.height=Math.round(215-95*i/8)+'px'; xy.appendChild(d); });
+  const og=document.getElementById('pad-organ'), N=ALLNOTES.length;
+  ALLNOTES.forEach((o,i)=>{ const h=Math.round((o.sharp?0.62:1)*(215-95*i/(N-1))); const d=mkPad('pipe'+(o.sharp?' sharp':''),o.n,'<span>'+o.sol+'</span><span>'+o.n+'</span>'); d.style.height=h+'px'; og.appendChild(d); });
+  (function buildTrumpetSandwich(){
+    const top=document.querySelector('#pad-trumpet .t-top'), mid=document.querySelector('#pad-trumpet .t-mid'), main=document.querySelector('#pad-trumpet .t-main');
+    mid.innerHTML='<svg viewBox="0 0 260 100"><rect x="4" y="44" width="10" height="12" rx="6" fill="#C67F00"/><rect x="14" y="47" width="30" height="6" rx="3" fill="#FFB300"/><rect x="44" y="47" width="90" height="6" rx="3" fill="#FFB300"/><rect x="70" y="30" width="16" height="34" rx="5" fill="#FFB300" stroke="#C67F00" stroke-width="2"/><rect x="95" y="30" width="16" height="34" rx="5" fill="#FFB300" stroke="#C67F00" stroke-width="2"/><rect x="120" y="30" width="16" height="34" rx="5" fill="#FFB300" stroke="#C67F00" stroke-width="2"/><rect x="67" y="22" width="22" height="10" rx="5" fill="#C67F00"/><rect x="92" y="22" width="22" height="10" rx="5" fill="#C67F00"/><rect x="117" y="22" width="22" height="10" rx="5" fill="#C67F00"/><path d="M74 64 v14 h12 v-14" stroke="#C67F00" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M99 64 v14 h12 v-14" stroke="#C67F00" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M124 64 v14 h12 v-14" stroke="#C67F00" stroke-width="5" fill="none" stroke-linecap="round"/><rect x="134" y="47" width="20" height="6" fill="#FFB300"/><rect x="154" y="47" width="16" height="6" fill="#FFB300"/><polygon points="170,40 240,8 240,92 170,60" fill="#FFB300"/><polygon points="170,40 195,30 195,70 170,60" fill="#F09800"/><ellipse cx="240" cy="50" rx="9" ry="42" fill="#C67F00"/><ellipse cx="240" cy="50" rx="4" ry="34" fill="#7A4D00"/><ellipse cx="205" cy="36" rx="18" ry="5" fill="#fff" opacity=".35"/></svg>';
+    const press=(b,note)=>{ b.addEventListener('pointerdown',e=>{ e.preventDefault(); playNote(note); b.classList.add('hit'); setTimeout(()=>b.classList.remove('hit'),150); pop(e.clientX||200,e.clientY||300); }); };
+    const mkBtn=(parent,n,sol)=>{ const b=document.createElement('button'); b.className=n.includes('#')?'minor':'major'; b.innerHTML=sol+'<small>'+n+'</small>'; press(b,n); parent.appendChild(b); };
+    [['C4','Do'],['C#4','Do#'],['D4','Re'],['D#4','Re#'],['E4','Mi'],['F4','Fa'],['F#4','Fa#']].forEach(p=>mkBtn(top,p[0],p[1]));
+    [['G4','Sol'],['G#4','Sol#'],['A4','La'],['A#4','La#'],['B4','Ti'],['C5','Do'],['C#5','Do#'],['D5','Re']].forEach(p=>mkBtn(main,p[0],p[1]));
+  })();
+})();
+  function buildTrumpetPistons(root,getInst,followFn){
+    const el=document.querySelector('#'+root+' .t-one');
+    const MN=['C4','D4','E4','F4','G4','A4','B4','C5','D5'], MS=['Do','Re','Mi','Fa','Sol','La','Ti','Do','Re'];
+    const SHN=['C#4','D#4','F#4','G#4','A#4','C#5'], SHS=['Do#','Re#','Fa#','Sol#','La#','Do#'], SHB=[0,1,3,4,5,7];
+    const X0=24, CW=34;
+    let s='<svg viewBox="0 0 460 234">';
+    s+='<defs><linearGradient id="goldV" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#FFB300"/><stop offset="1" stop-color="#C67F00"/></linearGradient><linearGradient id="goldD" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8A6238"/><stop offset=".5" stop-color="#4A3016"/><stop offset="1" stop-color="#2A1A08"/></linearGradient><linearGradient id="bellG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#FFB300"/><stop offset="1" stop-color="#E09E00"/></linearGradient><linearGradient id="capG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#C67F00"/></linearGradient></defs>';
+    s+='<ellipse class="deco" cx="8" cy="149" rx="7" ry="12" fill="#C67F00"/>';
+    s+='<rect class="deco" x="12" y="144" width="14" height="10" rx="3" fill="url(#goldV)"/>';
+    s+='<rect class="deco" x="14" y="140" width="316" height="18" rx="9" fill="url(#goldV)"/>';
+    s+='<rect class="deco" x="20" y="143" width="300" height="4" rx="2" fill="#fff" opacity=".45"/>';
+    s+='<polygon class="deco" points="330,132 430,100 430,196 330,166" fill="url(#bellG)"/>';
+    s+='<polygon class="deco" points="330,132 372,116 372,180 330,166" fill="#E09E00" opacity=".55"/>';
+    s+='<ellipse class="deco" cx="430" cy="148" rx="11" ry="48" fill="#C67F00"/>';
+    s+='<ellipse class="deco" cx="430" cy="148" rx="5" ry="38" fill="#3A2708"/>';
+    s+='<ellipse class="deco" cx="398" cy="118" rx="22" ry="6" fill="#fff" opacity=".4"/>';
+    s+='<path class="deco" d="M352,158 v18 h34 v-18" stroke="#C67F00" stroke-width="7" fill="none" stroke-linecap="round"/>';
+    s+='<circle class="deco" cx="386" cy="182" r="5" fill="#8A5A00"/>';
+    for(let i=0;i<9;i++){ const cx=X0+CW*i+CW/2;
+      s+='<rect data-note="'+MN[i]+'" x="'+(cx-13)+'" y="30" width="26" height="125" rx="7" fill="url(#goldV)" stroke="#8A5A00" stroke-width="2"/>';
+      s+='<rect data-note="'+MN[i]+'" x="'+(cx-17)+'" y="12" width="34" height="18" rx="9" fill="url(#capG)" stroke="#8A5A00" stroke-width="2"/>';
+      s+='<text x="'+cx+'" y="90" text-anchor="middle" font-size="14" font-weight="bold" fill="#7A4D00">'+MS[i]+'</text>';
+      s+='<text x="'+cx+'" y="108" text-anchor="middle" font-size="11" fill="#7A4D00">'+MN[i]+'</text>';
+    }
+    SHB.forEach((b,k)=>{ const cx=X0+CW*(b+1);
+      s+='<rect data-note="'+SHN[k]+'" x="'+(cx-11)+'" y="158" width="22" height="58" rx="6" fill="url(#goldD)" stroke="#2A1A08" stroke-width="2"/>';
+      s+='<rect data-note="'+SHN[k]+'" x="'+(cx-14)+'" y="216" width="28" height="14" rx="7" fill="#2A1A08" stroke="#1A0E04" stroke-width="2"/>';
+      s+='<text x="'+cx+'" y="190" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFE9C4">'+SHS[k]+'</text>';
+    });
+    s+='</svg>';
+    ['goldV','goldD','bellG','capG'].forEach(g=>{ const a='id="'+g+'"', b='id="'+g+'-'+root+'"', c='url(#'+g+')', d='url(#'+g+'-'+root+')'; s=s.split(a).join(b).split(c).join(d); });
+    el.innerHTML=s;
+    el.querySelectorAll('[data-note]').forEach(z=>{ z.addEventListener('pointerdown',e=>{ e.preventDefault(); hitPad(z,z.dataset.note,e,getInst&&getInst()); if(followFn)followFn(z.dataset.note); }); });
+  }
+  buildTrumpetPistons('pad-trumpet',null,null);
+  buildTrumpetPistons('pad2-trumpet',()=>songInst,followPress);
+(function buildSongXylo(){
+  const xy=document.getElementById('pad2-xylo');
+  if(!xy||xy.children.length) return;
+  xy.classList.add('vbars');
+  ALLNOTES.filter(o=>!o.sharp).forEach((o,i)=>{ const d=mkPad('xbar',o.n,'<span>'+o.sol+'</span><span>'+o.n+'</span>',()=>songInst,followPress); d.style.background=colorFor(o.n); d.style.height=Math.round(215-95*i/8)+'px'; xy.appendChild(d); });
+})();
+const PLAYVIEWS={piano:'kbd',xylophone:'pad-xylo',organ:'kbd',trumpet:'pad-trumpet'};
+const PLAYVIEWS2={piano:'kbd2',xylophone:'pad2-xylo',organ:'kbd2',trumpet:'pad2-trumpet'};
+function showSong(inst){ Object.values(PLAYVIEWS2).forEach(id=>{const e=document.getElementById(id); if(e) e.hidden=true;}); const el=document.getElementById(PLAYVIEWS2[inst]||'kbd2'); if(el) el.hidden=false; const w=document.getElementById('songWrap'); if(w) w.dataset.inst=inst; }
+function showPlay(inst){ Object.values(PLAYVIEWS).forEach(id=>{document.getElementById(id).hidden=true;}); const el=document.getElementById(PLAYVIEWS[inst]||'kbd'); if(el) el.hidden=false; }
+let kbd2;
+
+/* ---------- Instrument picker ---------- */
+document.getElementById('instRow').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#instRow button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); curInst=b.dataset.inst; document.querySelector('#tab-inst .kbd-wrap').dataset.inst=b.dataset.inst; showPlay(b.dataset.inst); ac();
+  playNote('C4',0.5); setTimeout(()=>playNote('E4',0.5),120); setTimeout(()=>playNote('G4',0.7),240);
+});
+
+/* ---------- Tabs ---------- */
+document.querySelector('nav').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active')); b.classList.add('active');
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('show'));
+  document.getElementById('tab-'+b.dataset.tab).classList.add('show'); ac();
+});
+
+/* ---------- Songs (note name + beats; all public-domain melodies) ---------- */
+const TW_N = ['C4','C4','G4','G4','A4','A4','G4','F4','F4','E4','E4','D4','D4','C4'];
+const TW_B = [1,1,1,1,1,1,2,1,1,1,1,1,1,2];
+const HB_N = ['G4','G4','A4','G4','C5','B4','G4','G4','A4','G4','D5','C5','G4','G4','G4','E4','C4','B4','A4','F4','F4','E4','C4','D4','C4'];
+const HB_B = [.75,.75,1,1,1,2,.75,.75,1,1,1,2,.75,.75,1,1,1,1,.75,.75,1,1,1,2,2];
+const MARY_N = ['E4','D4','C4','D4','E4','E4','E4','D4','D4','D4','E4','G4','G4','E4','D4','C4','D4','E4','E4','E4','E4','D4','D4','E4','D4','C4'];
+const MARY_B = [1,1,1,1,1,1,2,1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,3];
+const SONGS = [
+ {t:'Twinkle Twinkle Little Star', c:'#FFE066', n:TW_N, b:TW_B},
+ {t:'Baa, Baa, Black Sheep', c:'#E8E8E8', n:TW_N, b:TW_B},
+ {t:'ABC Song', c:'#B39DDB', n:TW_N, b:TW_B},
+ {t:'Happy Birthday', c:'#FF9BD2', n:HB_N, b:HB_B},
+ {t:'Old MacDonald', c:'#9BE7A0', n:['C4','C4','C4','G4','A4','A4','G4','E4','E4','D4','D4','C4'], b:[1,1,1,1,1,1,2,1,1,1,1,2]},
+ {t:'London Bridge', c:'#7FD8FF', n:['G4','A4','G4','F4','E4','F4','G4','D4','E4','F4','E4','F4','G4','G4','A4','G4','F4','E4','F4','G4','D4','G4','E4','C4'], b:[1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,2,2]},
+ {t:'Are You Sleeping?', c:'#B39DDB', n:['C4','D4','E4','C4','C4','D4','E4','C4','E4','F4','G4','E4','F4','G4','G4','A4','G4','F4','E4','C4','G4','A4','G4','F4','E4','C4'], b:[1,1,1,1,1,1,1,1,1,1,2,1,1,2,.5,.5,.5,.5,1,1,.5,.5,.5,.5,1,2]},
+ {t:'Jingle Bells', c:'#FF8A8A', n:['E4','E4','E4','E4','E4','E4','E4','G4','C4','D4','E4','F4','F4','F4','F4','F4','E4','E4','E4','E4','E4','D4','D4','E4','D4','G4'], b:[1,1,2,1,1,2,1,1,1.5,.5,4,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2]},
+ {t:'Ode to Joy', c:'#FFB347', n:['E4','E4','F4','G4','G4','F4','E4','D4','C4','C4','D4','E4','E4','D4','D4'], b:[1,1,1,1,1,1,1,1,1,1,1,1,1.5,.5,2]},
+ {t:'Yankee Doodle', c:'#7FD8FF', n:['C4','C4','D4','E4','C4','E4','D4','G4','C4','C4','D4','E4','C4','B4','A4','B4','C4','D4','E4','F4','E4','D4','C4','B4','A4','G4'], b:[1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,2]},
+ {t:'Oh! Susanna', c:'#FFB347', n:['C4','D4','E4','G4','G4','A4','G4','E4','C4','D4','E4','E4','D4','C4','D4','E4','E4','D4','D4','C4'], b:[1,1,1,1.5,.5,1,1.5,.5,1,1,1,1.5,.5,1,1,1,1.5,.5,1,2]},
+ {t:'Mary Had a Little Lamb', c:'#9BE7A0', n:MARY_N, b:MARY_B},
+ {t:'Row, Row, Row Your Boat', c:'#7FD8FF', n:['C4','C4','C4','D4','E4','E4','D4','E4','F4','G4','C5','C5','C5','G4','G4','G4','E4','E4','E4','C4','C4','C4','G4','F4','E4','C4','G4'], b:[1,1,1,1,2,1,1,1,1,3,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3]},
+ {t:'Hot Cross Buns', c:'#FF9F1C', n:['E4','D4','C4','E4','D4','C4','C4','C4','C4','C4','D4','D4','D4','D4','E4','D4','C4'], b:[1,1,2,1,1,2,1,1,1,1,1,1,1,1,1,1,3]},
+ {t:'Amazing Grace', c:'#B39DDB', n:['D4','G4','B4','G4','B4','A4','G4','E4','D4','D4','G4','B4','G4','B4','A4','D5','B4','D5','B4','G4','E4','G4','E4','D4','D4','G4','B4','G4','B4','A4','G4'], b:[1,1,2,1,2,1,1,1,2,1,1,2,1,1,1,3,1,2,1,2,1,1,1,2,1,1,2,1,1,1,3]},
+ {t:'Three Blind Mice', c:'#FFB347', n:['E4','D4','C4','E4','D4','C4','G4','F4','F4','E4','G4','F4','F4','E4','G4','C5','C5','B4','A4','B4','C5','G4','G4','G4','C5','C5','C5','B4','A4','B4','C5','G4','G4','G4','G4','C5','C5','B4','A4','B4','C5','G4','G4','G4','G4','F4','E4','D4','C4'], b:[1,1,2,1,1,2,1,1,1,2,1,1,1,2,1,1,1,1,2,1,1,2,2,1,1,1,1,2,1,1,1,2,2,1,1,1,1,1,2,1,1,2,2,1,1,1,1,2,3]},
+ {t:'Auld Lang Syne', c:'#B39DDB', n:['D4','G4','G4','G4','B4','A4','G4','A4','B4','G4','G4','B4','D4','E4','E4','D4','B4','B4','G4','A4','G4','A4','B4','A4','G4','E4','E4','D4','G4','E4','D4','B4','B4','G4','A4','G4','A4','E4','D4','B4','B4','D4','E4','G4','D4','B4','B4','G4','A4','G4','A4','B4','A4','G4','E4','E4','D4','G4'], b:[1,1,1,1,1,1,1,2,1,1,1,1,1,3,1,1,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,3]},
+ {t:'Itsy Bitsy Spider', c:'#9BE7A0', n:['D4','G4','G4','G4','A4','B4','B4','B4','A4','G4','A4','B4','G4','B4','B4','C5','D5','D5','C5','B4','C5','D5','B4','G4','G4','A4','B4','B4','A4','G4','A4','B4','G4','D4','G4','G4','G4','A4','B4','B4','B4','A4','G4','A4','B4','G4'], b:[1,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,2,1,1,1,1,1,2,1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,1,2,1,1,1,1,1,3]},
+ {t:'Deck the Halls', c:'#FF9F1C', n:['A4','G4','F#4','E4','D4','E4','F#4','E4','E4','F#4','G4','E4','F#4','E4','D4','C#4','D4','A4','G4','F#4','E4','D4','E4','F#4','E4','E4','F#4','G4','E4','F#4','E4','D4','C#4','D4','E4','F#4','G4','E4','F#4','G4','A4','F#4','F#4','G4','A4','B4','C#5','D5','C#5','B4','A4','A4','G4','F#4','E4','D4','E4','F#4','E4','B4','B4','B4','B4','A4','G4','F#4','E4','D4'], b:[1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,2,.5,.5,.5,.5,.5,.5,.5,.5,2,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,3]},
+ {t:'Silent Night (Easy)', c:'#7FD8FF', n:['G4','A4','G4','E4','D5','D5','B4','C5','C5','G4','A4','A4','C5','B4','A4','G4','A4','G4','E4','A4','A4','C5','B4','A4','G4','A4','G4','E4','D4','D4','F4','D4','B4','C5','E4','C5','G4','E4','G4','F4','D4','C4'], b:[1.5,.5,1,3,1.5,.5,1,1,1,3,1.5,.5,1,1,1,1.5,.5,1,3,1.5,.5,1,1,1,1.5,.5,1,3,1.5,.5,1,1,1,1,3,1.5,.5,1,1,1,1,4]},
+ {t:'Good Morning to You', c:'#FFE066', n:HB_N, b:HB_B},
+ {t:'Merrily We Roll Along', c:'#9BE7A0', n:MARY_N, b:MARY_B},
+ {t:'Up on the Housetop', c:'#FF8A8A', n:['G4','G4','A4','G4','E4','C4','E4','G4','A4','A4','G4','E4','D4','G4','G4','G4','G4','A4','G4','E4','C4','E4','G4','A4','A4','A4','G4','E4','D4','G4','C4','F4','F4','A4','G4','G4','G4','E4','D4','D4','F4','E4','G4','G4','C4','E4','G4','G4','A4','G4','E4','F4','G4','A4','G4','G4','A4','G4','E4','D4','G4','C4'], b:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,3]},
+];
+let selSong = 0, timer=null, followMode=false, followIdx=0;
+const listEl=document.getElementById('songList');
+SONGS.forEach((s,i)=>{ const d=document.createElement('div'); d.className='song-item'+(i===0?' sel':''); d.innerHTML='<div class="cover" style="background:'+s.c+'55">'+s.t.charAt(0)+'</div><div><b>'+s.t+'</b><br><small>'+s.n.length+' notes · Follow-me ready</small></div>'; d.onclick=()=>{ selSong=i; document.querySelectorAll('.song-item').forEach((x,j)=>x.classList.toggle('sel',j===i)); stopPlay(); }; listEl.appendChild(d); });
+function beatMs(){ return 60000/parseInt(document.getElementById('tempo').value); }
+function stopPlay(){ if(timer){clearTimeout(timer);timer=null;} if(typeof kbd2!=='undefined'&&kbd2) kbd2.clearTarget(); document.querySelectorAll('#tab-song .padHL').forEach(x=>x.classList.remove('padHL')); followIdx=0; }
+function autoPlay(){
+  stopPlay(); ac(); const s=SONGS[selSong]; let i=0;
+  document.getElementById('stars').textContent='Playing: '+s.t+'...';
+  const step=()=>{ if(i>=s.n.length){ document.getElementById('stars').textContent='Bravo! Great listening!'; kbd2.clearTarget(); timer=null; return; }
+    markSong(s.n[i]); playNote(s.n[i], Math.min(1.2, s.b[i]*0.9), 0, songInst); i++; timer=setTimeout(step, s.b[i]*beatMs()); };
+  step();
+}
+let songInst='piano';
+document.getElementById('songInstRow').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#songInstRow button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); songInst=b.dataset.sinst; showSong(b.dataset.sinst);
+  playNote('C4',0.5,0,songInst); setTimeout(()=>playNote('G4',0.7,0,songInst),140);
+});
+document.getElementById('btnAuto').onclick=autoPlay;
+document.getElementById('btnStop').onclick=()=>{ stopPlay(); document.getElementById('stars').textContent='Play a song or try Follow Me!'; };
+document.getElementById('btnFollow').onclick=(e)=>{ followMode=!followMode; followIdx=0; const btn=e.currentTarget; btn.querySelector('span').textContent=followMode?'Follow: ON':'Follow: OFF'; btn.classList.toggle('on',followMode); stopPlay(); if(followMode){ const s=SONGS[selSong]; markSong(s.n[0]); document.getElementById('stars').textContent='Tap the glowing key! (0/'+s.n.length+')'; } };
+function markSong(note){
+  if(typeof kbd2!=='undefined'&&kbd2) kbd2.mark(note);
+  document.querySelectorAll('#tab-song .padHL').forEach(x=>x.classList.remove('padHL'));
+  try{
+    const sel='#pad2-xylo [data-note="'+CSS.escape(note)+'"],#pad2-trumpet [data-note="'+CSS.escape(note)+'"]';
+    document.querySelectorAll(sel).forEach(x=>x.classList.add('padHL'));
+  }catch(e){}
+}
+function followPress(note){
+  if(!followMode) return; const s=SONGS[selSong];
+  if(note===s.n[followIdx]){ followIdx++; document.getElementById('stars').textContent='Well done! ('+followIdx+'/'+s.n.length+')';
+    if(followIdx>=s.n.length){ document.getElementById('stars').textContent='Perfect! You finished '+s.t+'!'; followIdx=0; setTimeout(()=>{ if(followMode) markSong(s.n[0]); },1200); return; }
+    markSong(s.n[followIdx]);
+  } else { document.getElementById('stars').textContent='Tap the glowing key!'; }
+}
+kbd2 = buildKbd('kbd2', followPress);
+
+/* ---------- Animals mode ---------- */
+const ANIMALS=[
+ {k:'Dog',e:'🐶',en:'Woof woof',c:'#FFB347'},{k:'Cat',e:'🐱',en:'Meow',c:'#FF9BD2'},
+ {k:'Cow',e:'🐮',en:'Moo',c:'#9BE7A0'},{k:'Sheep',e:'🐑',en:'Baa',c:'#E8E8E8'},
+ {k:'Pig',e:'🐷',en:'Oink',c:'#FF9BD2'},{k:'Chicken',e:'🐔',en:'Cluck cluck',c:'#FFE066'},
+ {k:'Duck',e:'🦆',en:'Quack quack',c:'#7FD8FF'},{k:'Frog',e:'🐸',en:'Ribbit',c:'#58CC5B'},
+ {k:'Lion',e:'🦁',en:'Roar',c:'#FF9F1C'},{k:'Elephant',e:'🐘',en:'Toot',c:'#B39DDB'},
+ {k:'Monkey',e:'🐵',en:'Ooh ooh',c:'#D2A679'},{k:'Bird',e:'🐦',en:'Tweet tweet',c:'#7FD8FF'},
+];
+const zoo=document.getElementById('zoo');
+function speak(t){ try{ const u=new SpeechSynthesisUtterance(t); u.lang='en-US'; u.rate=0.9; speechSynthesis.cancel(); speechSynthesis.speak(u);}catch(e){} }
+function animalSound(i){
+  const c=ac(), t=c.currentTime;
+  const tone=(f0,f1,dur,type,vol,delay)=>{ const o=c.createOscillator(),g=c.createGain(); o.type=type; const s=t+(delay||0); o.frequency.setValueAtTime(f0,s); o.frequency.exponentialRampToValueAtTime(Math.max(30,f1),s+dur); g.gain.setValueAtTime(vol,s); g.gain.exponentialRampToValueAtTime(0.001,s+dur); o.connect(g);g.connect(c.destination); o.start(s);o.stop(s+dur+0.05); };
+  switch(i){
+    case 0: tone(350,200,0.15,'square',0.4,0); tone(350,200,0.15,'square',0.4,0.2); break;
+    case 1: tone(600,950,0.3,'sine',0.5,0); tone(950,500,0.35,'sine',0.5,0.3); break;
+    case 2: tone(160,120,0.8,'sawtooth',0.4,0); break;
+    case 3: for(let k=0;k<4;k++) tone(420,380,0.15,'square',0.3,k*0.18); break;
+    case 4: tone(220,140,0.12,'sawtooth',0.45,0); tone(220,140,0.12,'sawtooth',0.45,0.15); break;
+    case 5: tone(900,1400,0.1,'square',0.3,0); tone(1400,900,0.15,'square',0.3,0.12); tone(900,1400,0.1,'square',0.3,0.3); break;
+    case 6: tone(320,250,0.2,'square',0.4,0); tone(320,250,0.2,'square',0.4,0.22); break;
+    case 7: for(let k=0;k<3;k++) tone(110,90,0.15,'square',0.45,k*0.2); break;
+    case 8: tone(200,80,0.9,'sawtooth',0.5,0); break;
+    case 9: tone(400,100,1.0,'sine',0.5,0); break;
+    case 10: for(let k=0;k<5;k++) tone(k%2?700:500,k%2?500:700,0.09,'square',0.3,k*0.1); break;
+    default: tone(2000,3000,0.1,'sine',0.3,0); tone(3000,2000,0.1,'sine',0.3,0.12); tone(2000,3200,0.15,'sine',0.3,0.24);
+  }
+}
+ANIMALS.forEach((a,i)=>{
+  const b=document.createElement('button'); b.style.background=a.c+'44';
+  b.innerHTML='<span class="em">'+a.e+'</span><b>'+a.k+'</b><small>'+a.en+'!</small>';
+  b.onclick=()=>{ animalSound(i); speak(a.k+'! '+a.en+'!'); b.classList.add('flash'); setTimeout(()=>b.classList.remove('flash'),400); const r=b.getBoundingClientRect(); pop(r.left+r.width/2, r.top, a.e); if(navigator.vibrate) navigator.vibrate(30); };
+  zoo.appendChild(b);
+});
+document.addEventListener('pointerdown', ()=>{ try{ac();}catch(e){} }, {once:true});
+</script>
+</body>
+</html>

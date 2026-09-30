@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="230" viewBox="0 0 230 230">
+  <rect x="5" y="5" width="120" height="210" rx="14" fill="#FFE9EE" stroke="#EEEEEE" stroke-width="3"/>
+  <circle cx="65" cy="120" r="26" fill="#FF8A8A" opacity=".35"/>
+  <text x="65" y="129" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="24" font-weight="bold" fill="#E06060" text-anchor="middle">Do</text>
+  <text x="65" y="180" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="19" font-weight="bold" fill="#4A4A4A" text-anchor="middle">Do</text>
+  <text x="65" y="202" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="15" fill="#999999" text-anchor="middle">C4</text>
+  <rect x="145" y="5" width="76" height="122" rx="10" fill="#333333"/>
+  <text x="183" y="105" font-family="'Baloo 2','Comic Sans MS',sans-serif" font-size="14" fill="#fff" text-anchor="middle">C#</text>
+</svg>
