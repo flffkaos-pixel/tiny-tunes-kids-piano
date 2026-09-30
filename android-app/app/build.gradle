@@ -10,8 +10,8 @@ android {
         applicationId 'com.tinytunes.kidspiano'
         minSdk 24
         targetSdk 36
-        versionCode 6
-        versionName '1.0.5'
+        versionCode 7
+        versionName '1.0.6'
     }
 
     signingConfigs {
@@ -40,5 +40,11 @@ android {
 
 dependencies {
     // AdMob for kids (Families Policy: certified SDK, G-rated non-personalized ads only)
-    implementation 'com.google.android.gms:play-services-ads:23.0.0'
+    implementation 'com.google.android.gms:play-services-ads:25.4.0'
+    constraints {
+        // Play Console flags fragment:1.0.0 as outdated - force latest stable
+        implementation('androidx.fragment:fragment:1.9.1') {
+            because 'Play Console outdated-SDK warning on fragment:1.0.0'
+        }
+    }
 }

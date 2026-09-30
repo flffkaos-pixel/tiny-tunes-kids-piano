@@ -3,6 +3,8 @@
 build/
 app/build/
 local.properties
+*.log
+*.err
 # Signing keys: NEVER commit - back up release.keystore separately!
 *.keystore
 *.jks
